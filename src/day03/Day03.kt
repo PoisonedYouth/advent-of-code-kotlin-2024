@@ -4,8 +4,12 @@ import println
 import readInput
 
 fun main() {
-    val regex1 = "mul\\([0-9]{1,3},[0-9]{1,3}\\)".toRegex()
-    val regex2 = "(mul\\([0-9]{1,3},[0-9]{1,3}\\)|do\\(\\)|don't\\(\\))".toRegex()
+    val regex1 = """
+        mul\([0-9]{1,3},[0-9]{1,3}\)
+    """.trimIndent().toRegex()
+    val regex2 = """
+        (mul\([0-9]{1,3},[0-9]{1,3}\)|(do\(\))|(don't\(\)))
+    """.trimIndent().toRegex()
 
     fun MatchResult.extractNumbers(): Pair<Int, Int> = this.value.substringAfter("mul(").substringBefore(")").split(",").map { it.toInt() }.let {
         it[0] to it[1]
