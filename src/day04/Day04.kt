@@ -7,16 +7,18 @@ import println
 import readInput
 
 fun main() {
-    fun getString(grid: List<List<Point>>, point: Point, steps: List<Move>): String {
-        var string = ""
-        var movingPoint = point
-        steps.forEach {
-            it.directions.forEach { direction ->
-                val newPoint = movingPoint.moveDirection(direction, grid)
-                if (newPoint == movingPoint) return ""
-                movingPoint = newPoint
+    fun getString(grid: List<List<Point>>, point: Point, vararg moves: Move): String {
+        var string = point.value.toString()
+        moves.forEach { move ->
+            var movingPoint = point
+            repeat(move.repeat) {
+                move.direction.forEach { direction ->
+                    val newPoint = movingPoint.moveDirection(direction, grid)
+                    if (newPoint == movingPoint) return "-"
+                    movingPoint = newPoint
+                }
+                string += movingPoint.value.toString()
             }
-            string += movingPoint.value.toString()
         }
         return string
     }
@@ -33,14 +35,14 @@ fun main() {
         grid.forEachIndexed { y, row ->
             row.forEachIndexed { x, point ->
                 if (point.value == 'X') {
-                    if (point.value + getString(grid, point, listOf(Move(listOf(UP)), Move(listOf(UP)), Move(listOf(UP)))) == searchString) count++
-                    if (point.value + getString(grid, point, listOf(Move(listOf(DOWN)), Move(listOf(DOWN)), Move(listOf(DOWN)))) == searchString) count++
-                    if (point.value + getString(grid, point, listOf(Move(listOf(LEFT)), Move(listOf(LEFT)), Move(listOf(LEFT)))) == searchString) count++
-                    if (point.value + getString(grid, point, listOf(Move(listOf(RIGHT)), Move(listOf(RIGHT)), Move(listOf(RIGHT)))) == searchString) count++
-                    if (point.value + getString(grid, point, listOf(Move(listOf(RIGHT, UP)), Move(listOf(RIGHT, UP)), Move(listOf(RIGHT, UP)))) == searchString) count++
-                    if (point.value + getString(grid, point, listOf(Move(listOf(RIGHT, DOWN)), Move(listOf(RIGHT, DOWN)), Move(listOf(RIGHT, DOWN)))) == searchString) count++
-                    if (point.value + getString(grid, point, listOf(Move(listOf(LEFT, UP)), Move(listOf(LEFT, UP)), Move(listOf(LEFT, UP)))) == searchString) count++
-                    if (point.value + getString(grid, point, listOf(Move(listOf(LEFT, DOWN)), Move(listOf(LEFT, DOWN)), Move(listOf(LEFT, DOWN)))) == searchString) count++
+                    if (getString(grid, point, Move(3, UP)) == searchString) count++
+                    if (getString(grid, point, Move(3, DOWN)) == searchString) count++
+                    if (getString(grid, point, Move(3, RIGHT)) == searchString) count++
+                    if (getString(grid, point, Move(3, LEFT)) == searchString) count++
+                    if (getString(grid, point, Move(3, RIGHT, UP)) == searchString) count++
+                    if (getString(grid, point, Move(3, RIGHT, DOWN)) == searchString) count++
+                    if (getString(grid, point, Move(3, LEFT, UP)) == searchString) count++
+                    if (getString(grid, point, Move(3, LEFT, DOWN)) == searchString) count++
                 }
             }
         }
@@ -59,13 +61,13 @@ fun main() {
         grid.forEachIndexed { y, row ->
             row.forEachIndexed { x, point ->
                 if (point.value == 'A') {
-                    val first = getString(grid, point, listOf(Move(listOf(RIGHT, UP)))) + point.value + getString(grid, point, listOf(Move(listOf(LEFT, DOWN))))
-                    val second = getString(grid, point, listOf(Move(listOf(RIGHT, DOWN)))) + point.value + getString(grid, point, listOf(Move(listOf(LEFT, UP))))
+                    val first = getString(grid, point, Move(1, RIGHT, UP), Move(1, LEFT, DOWN))
+                    val second = getString(grid, point, Move(1, RIGHT, DOWN), Move(1, LEFT, UP))
 
-                    if (first == "MAS" && second == "MAS") count++
-                    if (first == "MAS" && second == "SAM") count++
-                    if (first == "SAM" && second == "MAS") count++
-                    if (first == "SAM" && second == "SAM") count++
+                    if (first == "AMS" && second == "AMS") count++
+                    if (first == "AMS" && second == "ASM") count++
+                    if (first == "ASM" && second == "AMS") count++
+                    if (first == "ASM" && second == "ASM") count++
 
                 }
             }

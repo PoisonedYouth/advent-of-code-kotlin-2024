@@ -24,4 +24,5 @@ data class Point(val x: Int, val y: Int, val value: Char) {
     }
 }
 
-data class Move(val directions: List<Direction>)
+
+class Move(val repeat: Int = 1, vararg val direction: Direction)
