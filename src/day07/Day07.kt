@@ -2,6 +2,11 @@ package day07
 
 import println
 import readInput
+import java.lang.Math.pow
+import kotlin.math.floor
+import kotlin.math.log10
+import kotlin.math.pow
+import kotlin.time.measureTimedValue
 
 data class Equation(
     val testResult: Long,
@@ -11,20 +16,24 @@ data class Equation(
 fun main() {
 
     fun concatenate(a: Long, b: Long): Long {
-        return "$a$b".toLong()
+        val digits = if(b > 1) floor(log10(b.toDouble())).toInt() + 1 else 1
+        return a * 10.0.pow(digits).toLong() + b
     }
 
-    fun calculateResult(acc: Long, numbers: List<Long>, ops: List<(Long, Long) -> Long>): List<Long> {
+    fun calculateResult(testNumber: Long, acc: Long, numbers: List<Long>, ops: List<(Long, Long) -> Long>): Boolean {
         if (numbers.isEmpty()) {
-            return listOf(acc)
+            return testNumber == acc
+        }
+        if (acc > testNumber) {
+            return false
         }
         return ops.map {
             if (acc == 0L) {
-                calculateResult(it(numbers[0], numbers[1]), numbers.drop(2), ops)
+                calculateResult(testNumber, it(numbers[0], numbers[1]), numbers.drop(2), ops)
             } else {
-                calculateResult(it(acc, numbers[0]), numbers.drop(1), ops)
+                calculateResult(testNumber, it(acc, numbers[0]), numbers.drop(1), ops)
             }
-        }.flatten()
+        }.any{it}
     }
 
     fun parse(input: List<String>) = input.map { line ->
@@ -36,19 +45,27 @@ fun main() {
     fun part1(input: List<String>): Long {
         val equations = parse(input)
 
-        return equations
-            .filter { equation ->
-                calculateResult(0, equation.testNumbers, listOf(Long::plus, Long::times)).any { it == equation.testResult }
-            }.sumOf { it.testResult }
+        val (result, duration)= measureTimedValue {
+            equations
+                .filter { equation ->
+                    calculateResult(equation.testResult, 0, equation.testNumbers, listOf(Long::plus, Long::times))
+                }.sumOf { it.testResult }
+        }
+        println(duration)
+        return result
     }
 
     fun part2(input: List<String>): Long {
         val equations = parse(input)
 
-        return equations
-            .filter { equation ->
-                calculateResult(0, equation.testNumbers, listOf(Long::plus, Long::times, ::concatenate)).any { it == equation.testResult }
-            }.sumOf { it.testResult }
+        val (result, duration)= measureTimedValue {
+            equations
+                .filter { equation ->
+                    calculateResult(equation.testResult, 0, equation.testNumbers, listOf(Long::plus, Long::times, ::concatenate))
+                }.sumOf { it.testResult }
+        }
+        println(duration)
+        return result
     }
 
     val input = readInput("day07/Day07")
