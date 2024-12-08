@@ -1,5 +1,7 @@
 package common
 
+import kotlin.math.abs
+
 enum class Direction {
     UP, DOWN, LEFT, RIGHT;
 
@@ -46,6 +48,14 @@ data class Point(val x: Int, val y: Int, val value: Char) {
         Direction.LEFT -> {
             if (x == grid[y].size - 1) this else Point(x + 1, y, grid[y][x + 1].value)
         }
+    }
+
+    operator fun minus(other: Point): Point {
+        return Point(x - other.x, y - other.y, value)
+    }
+
+    operator fun plus(other: Point): Point {
+        return Point(x + other.x, y + other.y, value)
     }
 }
 
